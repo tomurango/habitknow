@@ -62,6 +62,8 @@ class _TodoListPageState extends State<TodoListPage> {
     super.initState();
     _auth.authStateChanges().listen((User? user_init) {
       if (user_init == null) {
+        //20220618サインインしてなかったらその表示をするようにする（情報探しから始まる感じで）
+
         print('User is currently signed out!');
         setState(() {
           user = null;
@@ -77,18 +79,7 @@ class _TodoListPageState extends State<TodoListPage> {
       }
     });
   }
-  /*
-  @override
-  void didChangeDependencies() {
-    var p = PageStorage.of(context).readState(context);
-    if (p != null) {
-      _auth = p;
-    } else {
-      _params = Page1Params();
-    }
-    super.didChangeDependencies();
-  }
-  */
+
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -108,21 +99,6 @@ class _TodoListPageState extends State<TodoListPage> {
               primary: Colors.white,
             ),
           ),
-          /*
-          if (user != null) GestureDetector(
-            onTap: (){
-              // （1） 指定した画面に遷移する
-              Navigator.push(context, MaterialPageRoute(
-                // （2） 実際に表示するページ(ウィジェット)を指定する
-                builder: (context) => LoginPage()
-              ));
-            },
-            child: CircleAvatar(
-              backgroundImage: NetworkImage(user.photoURL),
-            ),
-          ),*/
-          
-          
           if (user != null) Padding( // 推奨
             padding: EdgeInsets.only(right: 8.0),
             child: GestureDetector(
@@ -137,63 +113,26 @@ class _TodoListPageState extends State<TodoListPage> {
                 backgroundImage: NetworkImage(user.photoURL),
               ),
             ),
-          ),
-
-
-          
-          /*
-          ElevatedButton(
-            onPressed: () {},
-            child: Image(
-              //width: buttonWidth,
-              image: AssetImage(user.photoURL),
-              fit: BoxFit.contain,
-            ),
-            style: ElevatedButton.styleFrom(
-              shape: CircleBorder(),
-              padding: EdgeInsets.all(24),
-            ),
-          )
-          */
-          /*
-          ElevatedButton(
-            shape: CircleBorder(),
-            child: ClipOval(
-              child: Image(
-                width: buttonWidth,
-                image: AssetImage('assets/image-name.png'),
-                fit: BoxFit.contain,
-              )
-            ),
-          )
-          */
-          /*
-          TextButton(
-            onPressed: (){
-              // （1） 指定した画面に遷移する
-              Navigator.push(context, MaterialPageRoute(
-                // （2） 実際に表示するページ(ウィジェット)を指定する
-                builder: (context) => LoginPage()
-              ));
-            },
-            child: Text('ログインしてる'),
-            style: TextButton.styleFrom(
-              primary: Colors.white,
-            ),
-          )
-          */
-          
+          ),          
         ],
       ),
-      body: ListView.builder(
-        itemCount: todoList.length,
-        itemBuilder: (context, index){
-          return Card(
-            child: ListTile(
-              title: Text(todoList[index]),
-            ),
-          );
-        },
+
+      body: Center(
+        child: Column(
+          children: <Widget>[
+            if(user == null) Text('ログインしてない')
+            else ListView.builder(
+              itemCount: todoList.length,
+              itemBuilder: (context, index){
+                return Card(
+                  child: ListTile(
+                    title: Text(todoList[index]),
+                  )
+                );
+              },
+            )
+          ]
+        )
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async{
